@@ -69,7 +69,7 @@ void TrajectoryPlanner::generate(int lane, const Vehicle& ego, const std::vector
   /*
    * Don't change lane if the vehicle speed does not pick up.
    */
-  if (ego.speed < mph2mps(40.0)) {
+  if (ego.speed < mph2mps(30.0)) {
     lane = ego.lane;
     cout << "Picking up the speed..." << endl;
   }
@@ -82,7 +82,7 @@ void TrajectoryPlanner::generate(int lane, const Vehicle& ego, const std::vector
     if (lane == v.lane) {
       double object_s = v.s;
 
-      if ((object_s > ego.s) && (object_s - ego.s) < 25) {
+      if ((object_s > ego.s) && (object_s - ego.s) < 30) {
         too_close = true;
       }
     }

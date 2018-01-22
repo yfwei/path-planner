@@ -9,7 +9,7 @@
 
 #include "BehaviorPlanner.hpp"
 
-#define BUFFER_GAP  15
+#define BUFFER_GAP  20
 
 FSM BehaviorPlanner::nextState(const Vehicle& ego, std::vector<Vehicle> predictions)
 {
