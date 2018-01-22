@@ -148,7 +148,7 @@ int main() {
   uWS::Hub h;
 
   Predictor predictor;
-  BehaviorPlanner behaviorPlanner(mph2mps(49.5));
+  BehaviorPlanner behaviorPlanner(mph2mps(50));
 
   // Load up map values for waypoint's x,y,s and d normalized normal vectors
   vector<double> map_waypoints_x;
