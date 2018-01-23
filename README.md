@@ -46,7 +46,7 @@ Suggests the maneuver for the trajector planner to generate trajectories the ego
 - Lane Change Left
 - Lane Change Right
 
-I designed two cost functions to guide the ego vehicle to only changes lane when there is enough gap and it can make forward progress.
+The two cost functions described in the last section are used to guide the ego vehicle to only changes lane when there is enough gap and it can make forward progress.
 
 The output of the behavior planner is the lane number that the ego vehicle should take.
 
