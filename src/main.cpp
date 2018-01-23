@@ -97,59 +97,57 @@ int main() {
         
         if (event == "telemetry") {
           // j[1] is the data JSON object
+          // Main car's localization Data
+          double car_x = j[1]["x"];
+          double car_y = j[1]["y"];
+          double car_s = j[1]["s"];
+          double car_d = j[1]["d"];
+          double car_yaw = j[1]["yaw"];
+          double car_speed = j[1]["speed"];
+
+          // Previous path data given to the Planner
+          auto previous_path_x = j[1]["previous_path_x"];
+          auto previous_path_y = j[1]["previous_path_y"];
+          // Previous path's end s and d values 
+          double end_path_s = j[1]["end_path_s"];
+          double end_path_d = j[1]["end_path_d"];
+
+          // Sensor Fusion Data, a list of all other cars on the same side of the road.
+          auto sensor_fusion = j[1]["sensor_fusion"];
           
-        	// Main car's localization Data
-          	double car_x = j[1]["x"];
-          	double car_y = j[1]["y"];
-          	double car_s = j[1]["s"];
-          	double car_d = j[1]["d"];
-          	double car_yaw = j[1]["yaw"];
-          	double car_speed = j[1]["speed"];
+          auto prev_size = previous_path_x.size();
 
-          	// Previous path data given to the Planner
-          	auto previous_path_x = j[1]["previous_path_x"];
-          	auto previous_path_y = j[1]["previous_path_y"];
-          	// Previous path's end s and d values 
-          	double end_path_s = j[1]["end_path_s"];
-          	double end_path_d = j[1]["end_path_d"];
+          auto predictions = predictor.predict(sensor_fusion, prev_size);
 
-          	// Sensor Fusion Data, a list of all other cars on the same side of the road.
-          	auto sensor_fusion = j[1]["sensor_fusion"];
+          if (prev_size > 0)
+            car_s = end_path_s;
 
-          	auto prev_size = previous_path_x.size();
+          /* Represent the lonely self-driving car */
+          Vehicle ego{-1, car_x, car_y, 0.0, 0.0, car_s, car_d, car_yaw};
+          ego.speed = mph2mps(car_speed);
 
-            auto predictions = predictor.predict(sensor_fusion, prev_size);
-
-          	if (prev_size > 0)
-          	  car_s = end_path_s;
-
-          	/* Represent the lonely self-driving car */
-          	Vehicle ego{-1, car_x, car_y, 0.0, 0.0, car_s, car_d, car_yaw};
-          	ego.speed = mph2mps(car_speed);
-
-          	/* Don't change the state if the ego vehicle is still changing lane */
-          	if (ego.lane == behaviorPlanner.targetLane &&
-          	    ((ego.d > (2 + behaviorPlanner.targetLane * 4) - 0.5) &&
-          	     (ego.d < (2 + behaviorPlanner.targetLane * 4) + 0.5))) {
+          /* Don't change the state if the ego vehicle is still changing lane */
+          if (ego.lane == behaviorPlanner.targetLane &&
+              ((ego.d > (2 + behaviorPlanner.targetLane * 4) - 0.5) &&
+               (ego.d < (2 + behaviorPlanner.targetLane * 4) + 0.5))) {
               behaviorPlanner.nextState(ego, predictions);
               cout << "ego.lane=" << ego.lane << ", target lane=" << behaviorPlanner.targetLane << endl;
-          	}
+          }
 
-            vector<double> next_x_vals;
-            vector<double> next_y_vals;
-          	trajectoryPlanner.generate(behaviorPlanner.targetLane,
-          	    ego, predictions, previous_path_x, previous_path_y,
-          	    next_x_vals, next_y_vals);
-
-            json msgJson;
-          	msgJson["next_x"] = next_x_vals;
-          	msgJson["next_y"] = next_y_vals;
-
-          	auto msg = "42[\"control\","+ msgJson.dump()+"]";
-
-          	//this_thread::sleep_for(chrono::milliseconds(1000));
-          	ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+          vector<double> next_x_vals;
+          vector<double> next_y_vals;
           
+          trajectoryPlanner.generate(behaviorPlanner.targetLane,
+            ego, predictions, previous_path_x, previous_path_y,
+            next_x_vals, next_y_vals);
+          
+          json msgJson;
+          msgJson["next_x"] = next_x_vals;
+          msgJson["next_y"] = next_y_vals;
+
+          auto msg = "42[\"control\","+ msgJson.dump()+"]";
+
+          ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
         }
       } else {
         // Manual driving
