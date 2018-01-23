@@ -41,9 +41,6 @@ string hasData(string s) {
 int main() {
   uWS::Hub h;
 
-  Predictor predictor;
-  BehaviorPlanner behaviorPlanner(mph2mps(50));
-
   // Load up map values for waypoint's x,y,s and d normalized normal vectors
   vector<double> map_waypoints_x;
   vector<double> map_waypoints_y;
@@ -78,6 +75,8 @@ int main() {
   	map_waypoints_dy.push_back(d_y);
   }
 
+  Predictor predictor;
+  BehaviorPlanner behaviorPlanner(mph2mps(50));
   TrajectoryPlanner trajectoryPlanner{map_waypoints_x, map_waypoints_y, map_waypoints_s};
 
   h.onMessage([&predictor, &behaviorPlanner, &trajectoryPlanner](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
