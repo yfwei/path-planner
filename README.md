@@ -25,7 +25,7 @@ I used the spline fitting and generated the waypoints from the previous waypoint
 The path planner decelerates the car if the distance between the leading car is lower than 30 meters.
 
 #### 5.The car stays in its lane, except for the time between changing lanes.
-I designed two cost functions to have the car changed lane only when necessary and safe. The first cost function penalizes the car for staying in the slow lane and the second one penalizes the car for trying to change lane without enough gap.  
+I designed two cost functions to have the car changed lane only when necessary and safe. The first cost function penalizes the car for staying in the slow lane and the second one penalizes the car for trying to change lane without enough gap. So if the current lane is the fatest one, the car will stays in it. 
 
 #### 6.The car is able to change lanes 
 See the above point.
